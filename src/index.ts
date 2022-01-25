@@ -266,18 +266,19 @@ export class ExcelToCfg {
     public static convertDir(configPath: string, outDirs: string[], logger?: (info: string) => void) {
         this.convertDir0(configPath, '/', outDirs);
     }
-    private static convertDir0(path: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
-        if (! fs.statSync(path).isDirectory()) {
+    private static convertDir0(configPath: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
+        let filePath = Path.join(configPath, relativePath);
+        if (! fs.statSync(filePath).isDirectory()) {
             throw new Error("not a directory!")
         }
 
-        for (const file of fs.readdirSync(path)) {
+        for (const file of fs.readdirSync(configPath)) {
             let rPath = Path.join(relativePath, file);
-            if (fs.statSync(file).isDirectory()) {
-                this.convertDir0(path, rPath, outDirs);
+            if (fs.statSync(Path.join(filePath, file)).isDirectory()) {
+                this.convertDir0(configPath, rPath, outDirs);
                 continue;
             }
-            let excelToCfg = new ExcelToCfg(Role.SERVER, rPath, path, outDirs, logger)
+            let excelToCfg = new ExcelToCfg(Role.SERVER, rPath, configPath, outDirs, logger)
             excelToCfg.convert();
         }
     }
@@ -577,3 +578,5 @@ class ExcelSheet {
 }
 // let excelToCfg = new ExcelToCfg(Role.SERVER, "./__tests__/G全局表_global_setting.xlsx", __dirname, [__dirname]);
 // excelToCfg.convert()
+
+ExcelToCfg.convertDir("/Users/qiunet/doc/xf3d/client/Config/content", ["/Users/qiunet/Desktop/cfg"])
