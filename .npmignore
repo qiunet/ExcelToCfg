@@ -1,0 +1,13 @@
+library
+build
+local
+temp
+.idea
+.tsconfig.json
+node_modules
+.vscode
+test
+lib
+src
+tslint.json
+.prettierrc

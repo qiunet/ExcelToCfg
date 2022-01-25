@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "target": "ESNext",
+    "module": "commonjs",
+    "declaration": true,
+    "importHelpers": true,
+    "jsx": "preserve",
+      "paths": {},
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./lib",
+    "strict": true
+  },
+    "include": ["src"],
+    "exclude": ["node_modules", "**/__tests__/*"]
+}
