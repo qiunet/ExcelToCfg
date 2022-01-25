@@ -567,5 +567,5 @@ class ExcelSheet {
         });
     }
 }
-let excelToCfg = new ExcelToCfg(Role.SERVER, "./__tests__/G全局表_global_setting.xlsx", __dirname, [__dirname]);
-excelToCfg.convert()
+// let excelToCfg = new ExcelToCfg(Role.SERVER, "./__tests__/G全局表_global_setting.xlsx", __dirname, [__dirname]);
+// excelToCfg.convert()
