@@ -1,12 +1,11 @@
 {
   "name": "excel_to_cfg",
-  "version": "1.0.10",
-  "type": "module",
+  "version": "1.0.12",
   "author": "qiunet",
   "description": "excel转换的一个工具",
   "scripts": {
     "build": "tsc",
-    "prepare": "npm run build && npm version patch",
+    "prepare": "npm version patch && npm run build",
     "format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\""
   },
   "dependencies": {

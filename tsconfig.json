@@ -2,7 +2,7 @@
   "compilerOptions": {
     "moduleResolution": "node",
     "target": "ESNext",
-    "module": "ESNext",
+    "module": "commonjs",
     "declaration": true,
     "importHelpers": true,
     "jsx": "preserve",

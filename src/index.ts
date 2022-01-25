@@ -243,15 +243,16 @@ export class ExcelToCfg {
             this._logger(this._fileRelativePath + "不是xlsx文件");
             throw new Error(this._fileRelativePath + "不是xlsx文件");
         }
-
         let workbook = new Excel.Workbook();
-        workbook.xlsx.readFile(Path.join(this._configDir, this._fileRelativePath)).then(workbook => {
-            for (let worksheet of workbook.worksheets) {
-                if (worksheet.name === 'end') {
-                    break;
+        fs.promises.readFile(Path.join(this._configDir, this._fileRelativePath)).then(data => {
+            workbook.xlsx.load(data.buffer).then(workbook => {
+                for (let worksheet of workbook.worksheets) {
+                    if (worksheet.name === 'end') {
+                        break;
+                    }
+                    new ExcelSheet(this, worksheet).handlerSheet();
                 }
-                new ExcelSheet(this, worksheet).handlerSheet();
-            }
+            });
         });
     }
 
@@ -566,3 +567,5 @@ class ExcelSheet {
         });
     }
 }
+let excelToCfg = new ExcelToCfg(Role.SERVER, "./__tests__/G全局表_global_setting.xlsx", __dirname, [__dirname]);
+excelToCfg.convert()
