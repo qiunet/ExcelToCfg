@@ -273,6 +273,11 @@ export class ExcelToCfg {
         }
 
         for (const file of fs.readdirSync(configPath)) {
+            if (file.startsWith(".")) {
+                // 一般 .svn .git 目录.
+                continue;
+            }
+
             let rPath = Path.join(relativePath, file);
             if (fs.statSync(Path.join(filePath, file)).isDirectory()) {
                 this.convertDir0(configPath, rPath, outDirs);
