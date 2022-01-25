@@ -1,8 +1,9 @@
 import * as Path from "path";
+import * as Excel from 'exceljs';
 import ejs from "ejs";
 import os from "os";
 import fs from "fs";
-import * as Excel from 'exceljs'
+
 /**
  * 跟 common/Enums/Role 同步.
  * ExcelToCfg  是个单独能运行的ts.
@@ -174,16 +175,16 @@ export class ExcelToCfg {
      *
      * @private
      */
-    private readonly _outputDirPath: string;
+    private readonly _outputDirPaths: string[];
     /**
      * 记录日志
      * @private
      */
     private readonly _logger: (info: string) => void;
 
-    constructor(role: Role, fileRelativePath: string, configDir: string, outputDirPath: string, logger?: (info: string) => void) {
+    constructor(role: Role, fileRelativePath: string, configDir: string, outputDirPaths:string[], logger?: (info: string) => void) {
         this._fileRelativePath = fileRelativePath;
-        this._outputDirPath = outputDirPath;
+        this._outputDirPaths = outputDirPaths;
         this._configDir = configDir;
         this._role = role;
         if (logger) {
@@ -225,15 +226,15 @@ export class ExcelToCfg {
         return this._configDir;
     }
 
-    get outputDirPath(): string {
-        return this._outputDirPath;
+    get outputDirPaths(): string[] {
+        return this._outputDirPaths;
     }
 
     /**
      * 转换并生成文件
      */
     public convert(): void {
-        if (this._outputDirPath === '' || this._outputDirPath == null) {
+        if (this._outputDirPaths === null || this._outputDirPaths.length === 0) {
             this.logger("项目输出路径为空. 转化终止!\n")
             return
         }
@@ -252,6 +253,32 @@ export class ExcelToCfg {
                 new ExcelSheet(this, worksheet).handlerSheet();
             }
         });
+    }
+
+    /**
+     * 服务器脚本调用.
+     * 转换整个文件夹.
+     * @param configPath
+     * @param outDirs
+     * @param logger
+     */
+    public static convertDir(configPath: string, outDirs: string[], logger?: (info: string) => void) {
+        this.convertDir0(configPath, '/', outDirs);
+    }
+    private static convertDir0(path: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
+        if (! fs.statSync(path).isDirectory()) {
+            throw new Error("not a directory!")
+        }
+
+        for (const file of fs.readdirSync(path)) {
+            let rPath = Path.join(relativePath, file);
+            if (fs.statSync(file).isDirectory()) {
+                this.convertDir0(path, rPath, outDirs);
+                continue;
+            }
+            let excelToCfg = new ExcelToCfg(Role.SERVER, rPath, path, outDirs, logger)
+            excelToCfg.convert();
+        }
     }
 
 }
@@ -503,25 +530,39 @@ class ExcelSheet {
      * @param useTypes
      */
     public output(data: ExcelCfg, useTypes: Set<string>) {
-        useTypes.forEach(key => {
-            const templateFilePath:string = Path.join(Constants.ejsTemplateDir(), key + ".ejs");
+        useTypes.forEach(postfix => {
+            if (postfix === 'json') {
+                return this.output0(JSON.stringify(data, null, '\t'), postfix);
+            }
+            const templateFilePath:string = Path.join(Constants.ejsTemplateDir(), postfix + ".ejs");
             ejs.renderFile(templateFilePath, data, ((err, content) => {
                 if (err) {
                     console.error(err);
                     return;
                 }
-                let fileName: string =  this.cfgConfig.getCfgPrefix() + "_" + this.sheet.name + "."+key;
-                let filePath = Path.join(this.cfgConfig.outputDirPath, Path.dirname(this.cfgConfig.fileRelativePath), fileName);
-                if (!fs.existsSync(Path.dirname(filePath))) {
-                    fs.mkdirSync(Path.dirname(filePath), { recursive: true });
-                }
-                fs.writeFile(filePath, content, (err) => {
-                    if (err) {
-                        console.error(err);
-                    }
-                });
+                this.output0(content, postfix);
             }));
         });
     }
-}
 
+    /**
+     * 往文件输出内容
+     * @param content
+     * @param postfix
+     * @private
+     */
+    private output0(content: string, postfix: string): void {
+        let fileName: string =  this.cfgConfig.getCfgPrefix() + "_" + this.sheet.name + "."+postfix;
+        this.cfgConfig.outputDirPaths.forEach((outputDir) => {
+            let filePath = Path.join(outputDir, Path.dirname(this.cfgConfig.fileRelativePath), fileName);
+            if (!fs.existsSync(Path.dirname(filePath))) {
+                fs.mkdirSync(Path.dirname(filePath), { recursive: true });
+            }
+            fs.writeFile(filePath, content, (err) => {
+                if (err) {
+                    console.error(err);
+                }
+            });
+        });
+    }
+}
