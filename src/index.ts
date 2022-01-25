@@ -522,7 +522,15 @@ class ExcelSheet {
 
         this.output(excelCfg, this.outputTemplates());
     }
-
+    private readonly jsonEjs: string = "[\n" +
+        "<%_ rows.forEach(function (row, rIndex){ _%>\n" +
+        "    {\n" +
+        "    <%_ row.cells.forEach(function (cell, cIndex) { _%>\n" +
+        "        \"<%= cell.name %>\": <% if (cell.isStringType()) {%>\"<% }%><%=cell.val%><% if (cell.isStringType()) {%>\"<% }%><% if(cIndex < row.cells.length - 1) { %>,<% } %>\n" +
+        "     <%_}); _%>\n" +
+        "    }<% if(rIndex < rows.length - 1) { %>,<% } %>\n" +
+        "<%_ }); _%>\n" +
+        "]\n";
     /**
      * 处理数据
      * @param data
@@ -533,7 +541,7 @@ class ExcelSheet {
     public output(data: ExcelCfg, useTypes: Set<string>) {
         useTypes.forEach(postfix => {
             if (postfix === 'json') {
-                return this.output0(JSON.stringify(data, null, '\t'), postfix);
+                return this.output0(ejs.render(this.jsonEjs, data), postfix);
             }
             const templateFilePath:string = Path.join(Constants.ejsTemplateDir(), postfix + ".ejs");
             ejs.renderFile(templateFilePath, data, ((err, content) => {
