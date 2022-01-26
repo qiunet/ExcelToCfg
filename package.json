@@ -1,6 +1,6 @@
 {
   "name": "excel_to_cfg",
-  "version": "1.0.32",
+  "version": "1.0.33",
   "author": "qiunet",
   "description": "excel转换的一个工具",
   "scripts": {
