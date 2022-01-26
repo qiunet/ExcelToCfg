@@ -361,11 +361,18 @@ class ExcelSheet {
                 return (<Excel.CellFormulaValue>cell.value).result + '';
             }
 
+            if (cell.type == Excel.ValueType.RichText) {
+                let result = '';
+                let richText: Excel.RichText [] = (<Excel.CellRichTextValue>cell.value).richText;
+                richText.forEach(r => result += r.text);
+                return result;
+            }
+
             return cell.value.toString().trim();
         }
         let result = getterVal();
         if (type === 'string' || type === 'int[]' || type === 'long[]') {
-            return result;
+            return result.replaceAll("\"", "'");
         }
         return Number(result);
     }
@@ -532,7 +539,7 @@ class ExcelSheet {
         "<%_ rows.forEach(function (row, rIndex){ _%>\n" +
         "    {\n" +
         "    <%_ row.cells.forEach(function (cell, cIndex) { _%>\n" +
-        "        \"<%= cell.name %>\": <% if (cell.isStringType()) {%>\"<% }%><%=cell.val%><% if (cell.isStringType()) {%>\"<% }%><% if(cIndex < row.cells.length - 1) { %>,<% } %>\n" +
+        "        \"<%= cell.name %>\": <% if (cell.isStringType()) {%>\"<% }%><%-cell.val%><% if (cell.isStringType()) {%>\"<% }%><% if(cIndex < row.cells.length - 1) { %>,<% } %>\n" +
         "     <%_}); _%>\n" +
         "    }<% if(rIndex < rows.length - 1) { %>,<% } %>\n" +
         "<%_ }); _%>\n" +
