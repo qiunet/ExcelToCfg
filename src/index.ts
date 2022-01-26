@@ -567,7 +567,7 @@ class ExcelSheet {
      * @private
      */
     private output0(content: string, postfix: string): void {
-        let fileName: string =  this.cfgConfig.getCfgPrefix() + "_" + this.sheet.name + "."+postfix;
+        let fileName: string =  this.cfgConfig.getCfgPrefix() + "_" + this.realName() + "."+postfix;
         this.cfgConfig.outputDirPaths.forEach((outputDir) => {
             let filePath = Path.join(outputDir, Path.dirname(this.cfgConfig.fileRelativePath), fileName);
             if (!fs.existsSync(Path.dirname(filePath))) {
