@@ -581,5 +581,3 @@ class ExcelSheet {
         });
     }
 }
-let excelToCfg = new ExcelToCfg(Role.SERVER, "../H家园_home.xlsx", __dirname, [__dirname]);
-excelToCfg.convert()
