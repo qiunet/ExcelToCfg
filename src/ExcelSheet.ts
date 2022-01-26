@@ -289,7 +289,7 @@ export class ExcelSheet {
             set.clear();
         }
 
-        if (! justClient || set.size == 0) {
+        if (! justClient || set.size === 0) {
             set.add('json');
         }
         return set;
@@ -301,11 +301,11 @@ export class ExcelSheet {
      * @private
      */
     public handlerSheet() {
-        if (this.cfgConfig.role == Role.SERVER && this.sheet.name.indexOf("c.") != -1) {
+        if (this.cfgConfig.role === Role.SERVER && this.sheet.name.indexOf("c.") !== -1) {
             return;
         }
 
-        if (this.cfgConfig.role == Role.CLIENT && this.sheet.name.indexOf("s.") != -1) {
+        if (this.cfgConfig.role === Role.CLIENT && this.sheet.name.indexOf("s.") !== -1) {
             return;
         }
 
@@ -328,15 +328,15 @@ export class ExcelSheet {
             let dataList: ExcelRowCfg = new ExcelRowCfg();
             for (let j = 1; j <= this.columnCount; j++) {
                 let outputType = this.fieldOutputTypes[j - 1];
-                if (outputType == OutputType.IGNORE || j === (ignoreFieldIndex + 1)) {
+                if (outputType === OutputType.IGNORE || j === (ignoreFieldIndex + 1)) {
                     continue;
                 }
 
-                if (this.cfgConfig.role == Role.CLIENT && outputType == OutputType.SERVER) {
+                if (this.cfgConfig.role === Role.CLIENT && outputType === OutputType.SERVER) {
                     continue;
                 }
 
-                if (this.cfgConfig.role == Role.SERVER && outputType == OutputType.CLIENT) {
+                if (this.cfgConfig.role === Role.SERVER && outputType === OutputType.CLIENT) {
                     continue;
                 }
 
