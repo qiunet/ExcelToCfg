@@ -364,7 +364,7 @@ class ExcelSheet {
             return cell.value.toString().trim();
         }
         let result = getterVal();
-        if (type === 'string') {
+        if (type === 'string' || type === 'int[]' || type === 'long[]') {
             return result;
         }
         return Number(result);
@@ -581,5 +581,5 @@ class ExcelSheet {
         });
     }
 }
-// let excelToCfg = new ExcelToCfg(Role.SERVER, "./__tests__/G全局表_global_setting.xlsx", __dirname, [__dirname]);
-// excelToCfg.convert()
+let excelToCfg = new ExcelToCfg(Role.SERVER, "../H家园_home.xlsx", __dirname, [__dirname]);
+excelToCfg.convert()
