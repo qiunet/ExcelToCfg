@@ -170,28 +170,28 @@ export class ExcelToCfg {
      * @param logger
      */
     public static convertDir(configPath: string, outDirs: string[], logger?: (info: string) => void) {
-        this.convertDir0(configPath, '/', outDirs);
+        this.roleConvertDir(Role.SERVER, configPath, '/', outDirs);
     }
 
 
-    private static convertDir0(configPath: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
+    public static roleConvertDir(role: Role, configPath: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
         let filePath = Path.join(configPath, relativePath);
         if (! fs.statSync(filePath).isDirectory()) {
             throw new Error("not a directory!")
         }
 
         for (const file of fs.readdirSync(configPath)) {
-            if (file.startsWith(".")) {
+            if (file.startsWith(".") || !file.endsWith(".xlsx")) {
                 // 一般 .svn .git 目录.
                 continue;
             }
 
             let rPath = Path.join(relativePath, file);
             if (fs.statSync(Path.join(filePath, file)).isDirectory()) {
-                this.convertDir0(configPath, rPath, outDirs);
+                this.roleConvertDir(role, configPath, rPath, outDirs);
                 continue;
             }
-            let excelToCfg = new ExcelToCfg(Role.SERVER, rPath, configPath, outDirs, logger)
+            let excelToCfg = new ExcelToCfg(role, rPath, configPath, outDirs, logger)
             excelToCfg.convert();
         }
     }
