@@ -187,7 +187,7 @@ export class ExcelSheet {
             return cell.value.toString().trim();
         }
         let result = getterVal();
-        if (type === 'string' || type === 'int[]' || type === 'long[]') {
+        if (type !== 'long' && type != 'int') {
             return result.replaceAll("\"", "'");
         }
         return Number(result);
