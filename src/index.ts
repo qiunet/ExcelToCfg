@@ -139,7 +139,7 @@ export class ExcelToCfg {
     /**
      * 转换并生成文件
      */
-    public convert(): void {
+    convert(): void {
         if (this._outputDirPaths === null || this._outputDirPaths.length === 0) {
             this.logger("项目输出路径为空. 转化终止!\n")
             return
@@ -170,30 +170,29 @@ export class ExcelToCfg {
      * @param logger
      */
     public static convertDir(configPath: string, outDirs: string[], logger?: (info: string) => void) {
-        this.roleConvertDir(Role.SERVER, configPath, '/', outDirs);
+        this.roleConvert(Role.SERVER, configPath, '/', outDirs);
     }
 
 
-    public static roleConvertDir(role: Role, configPath: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
+    public static roleConvert(role: Role, configPath: string, relativePath: string, outDirs: string[], logger?: (info: string) => void): void {
         let filePath = Path.join(configPath, relativePath);
         if (! fs.statSync(filePath).isDirectory()) {
-            throw new Error("not a directory!")
+            if (! relativePath.endsWith(".xlsx")) {
+                return;
+            }
+
+            let excelToCfg = new ExcelToCfg(role, relativePath, configPath, outDirs, logger)
+            excelToCfg.convert();
+            return;
         }
 
         for (const file of fs.readdirSync(configPath)) {
-            if (file.startsWith(".") || !file.endsWith(".xlsx")) {
+            if (file.startsWith(".")) {
                 // 一般 .svn .git 目录.
                 continue;
             }
 
-            let rPath = Path.join(relativePath, file);
-            if (fs.statSync(Path.join(filePath, file)).isDirectory()) {
-                this.roleConvertDir(role, configPath, rPath, outDirs);
-                continue;
-            }
-            let excelToCfg = new ExcelToCfg(role, rPath, configPath, outDirs, logger)
-            excelToCfg.convert();
+            this.roleConvert(role, configPath, Path.join(relativePath, file), outDirs, logger);
         }
     }
-
 }
