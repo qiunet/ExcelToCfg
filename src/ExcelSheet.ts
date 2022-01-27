@@ -187,10 +187,10 @@ export class ExcelSheet {
             return cell.value.toString().trim();
         }
         let result = getterVal();
-        if (type !== 'long' && type != 'int') {
-            return result.replaceAll("\"", "'");
+        if (type === 'long' || type === 'int') {
+            return Number(result);
         }
-        return Number(result);
+        return result.replaceAll("\"", "'");
     }
     /**
      * 实际的列数
