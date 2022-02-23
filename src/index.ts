@@ -153,9 +153,14 @@ export class ExcelToCfg {
         fs.promises.readFile(Path.join(this._configDir, this._fileRelativePath)).then(data => {
             workbook.xlsx.load(data.buffer).then(workbook => {
                 for (let worksheet of workbook.worksheets) {
-                    if (worksheet.name === 'end' || worksheet.name.startsWith("#")) {
+                    if (worksheet.name === 'end') {
+                        break;
+                    }
+
+                    if (worksheet.name.startsWith("#")) {
                         continue;
                     }
+
                     new ExcelSheet(this, worksheet).handlerSheet();
                 }
             });
