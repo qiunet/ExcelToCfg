@@ -1,6 +1,6 @@
 {
   "name": "excel_to_cfg",
-  "version": "1.0.51",
+  "version": "1.0.52",
   "author": "qiunet",
   "description": "excel转换的一个工具",
   "main": "lib/index.js",
