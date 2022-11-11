@@ -296,16 +296,35 @@ export class ExcelSheet {
     }
 
     /**
+     * 判断全表是否都没有该角色需要的字段
+     */
+    private handlerNonFieldRoleNeed(outputType: OutputType): boolean {
+        var nonFieldNeed = true;
+        for (let type of this.fieldOutputTypes) {
+            if (type == OutputType.ALL || type == outputType) {
+                nonFieldNeed = false;
+                break
+            }
+        }
+        return nonFieldNeed;
+    }
+
+    /**
      * 处理单个sheet
      * @param sheet sheet
      * @private
      */
     public handlerSheet() {
-        if (this.cfgConfig.role === Role.SERVER && this.sheet.name.indexOf("c.") !== -1) {
+        if (this.cfgConfig.role === Role.SERVER
+        && (this.sheet.name.indexOf("c.") !== -1 || this.handlerNonFieldRoleNeed(OutputType.SERVER))) {
+            this.logger('[' + this.cfgConfig.getFileName() + '.' + this.sheet.name + ']没有字段符合[SERVER]角色, 输出忽略!')
             return;
         }
 
-        if (this.cfgConfig.role === Role.CLIENT && this.sheet.name.indexOf("s.") !== -1) {
+
+        if (this.cfgConfig.role === Role.CLIENT
+        && (this.sheet.name.indexOf("s.") !== -1 || this.handlerNonFieldRoleNeed(OutputType.CLIENT))) {
+            this.logger('[' + this.cfgConfig.getFileName() + '.' + this.sheet.name + ']没有字段符合[CLIENT]角色, 输出忽略!')
             return;
         }
 
