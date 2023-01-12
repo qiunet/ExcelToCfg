@@ -213,9 +213,9 @@ export class ExcelSheet {
      * @param sheet
      */
     private actualRowLength() {
-        let index = 1;
+        let index = 0;
         for (; index <= this.sheet.actualRowCount;) {
-            if (this.cellValue(this.sheet.getRow(index).getCell(1)) === '') {
+            if (this.cellValue(this.sheet.getRow(index + 1).getCell(1)) === '') {
                 break;
             }
             index++;
