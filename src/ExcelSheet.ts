@@ -190,7 +190,7 @@ export class ExcelSheet {
         if (type === 'long' || type === 'int') {
             return Number(result);
         }
-        return result.replaceAll("\"", "'");
+        return result.replaceAll("\"", "\\\"");
     }
     /**
      * 实际的列数
