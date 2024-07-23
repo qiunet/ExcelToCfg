@@ -175,7 +175,7 @@ export class ExcelToCfg {
      * @param logger
      */
     public static convertDir(configPath: string, outDirs: string[], logger?: (info: string) => void) {
-        this.roleConvert(Role.SERVER, configPath, '/', outDirs);
+        this.roleConvert(Role.SERVER, configPath, '/', outDirs, logger);
     }
 
 

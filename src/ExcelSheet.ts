@@ -315,6 +315,15 @@ export class ExcelSheet {
      * @private
      */
     public handlerSheet() {
+        if (this.columnCount <= 0) {
+            this.logger("Excel["+this.cfgConfig.getFileName()+"] 列数["+this.columnCount+"]错误, 没有任何数据!")
+            return;
+        }
+        if (this.rowCount < 0) {
+            this.logger("Excel["+this.cfgConfig.getFileName()+"] 行数["+this.rowCount+"]错误, 没有表头!")
+            return;
+        }
+
         if (this.cfgConfig.role === Role.SERVER
         && (this.sheet.name.indexOf("c.") !== -1 || this.handlerNonFieldRoleNeed(OutputType.SERVER))) {
             this.logger('[' + this.cfgConfig.getFileName() + '.' + this.sheet.name + ']没有字段符合[SERVER]角色, 输出忽略!')
