@@ -169,6 +169,10 @@ export class ExcelSheet {
                 return '';
             }
 
+            if (cell.type == Excel.ValueType.Hyperlink) {
+                return cell.text
+            }
+
             if (cell.type == Excel.ValueType.Formula) {
                 return (<Excel.CellFormulaValue>cell.value).result + '';
             }
