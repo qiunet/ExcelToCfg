@@ -127,7 +127,7 @@ export class ExcelSheet {
      * 真实行数
      * @private
      */
-    private readonly rowCount: number;
+    private rowCount: number = 0;
     /**
      * 字段名
      * @private
@@ -150,12 +150,9 @@ export class ExcelSheet {
         this.sheet = sheet;
 
         this.columnCount = this.actualColumnLength();
-        this.rowCount = this.actualRowLength();
         this.fieldOutputTypes = this.getFieldOutputTypes();
         this.fieldNames = this.getFieldNames();
         this.fieldTypes = this.getFieldTypes();
-
-        this.logger("处理excel["+cfgConfig.getFileName()+"] ["+cfgConfig.getCfgPrefix()+"_"+ sheet.name + "] 行数:"+this.rowCount+" 列数:"+this.columnCount + "\n");
     }
 
     /**
@@ -323,10 +320,6 @@ export class ExcelSheet {
             this.logger("Excel["+this.cfgConfig.getFileName()+"] 列数["+this.columnCount+"]错误, 没有任何数据!")
             return;
         }
-        if (this.rowCount < 0) {
-            this.logger("Excel["+this.cfgConfig.getFileName()+"] 行数["+this.rowCount+"]错误, 没有表头!")
-            return;
-        }
 
         if (this.cfgConfig.role === Role.SERVER
         && (this.sheet.name.indexOf("c.") !== -1 || this.handlerNonFieldRoleNeed(OutputType.SERVER))) {
@@ -340,6 +333,15 @@ export class ExcelSheet {
             this.logger('[' + this.cfgConfig.getFileName() + '.' + this.sheet.name + ']没有字段符合[CLIENT]角色, 输出忽略!')
             return;
         }
+
+        this.rowCount = this.actualRowLength();
+        if (this.rowCount < 0) {
+
+            this.logger("Excel["+this.cfgConfig.getFileName()+"] 行数["+this.rowCount+"]错误, 没有表头!")
+            return;
+        }
+
+        this.logger("处理excel["+this.cfgConfig.getFileName()+"] ["+this.cfgConfig.getCfgPrefix()+"_"+ this.sheet.name + "] 行数:"+this.rowCount+" 列数:"+this.columnCount + "\n");
 
         let ignoreFieldIndex = -1;
         this.fieldNames.find((element, index, arr) => {
